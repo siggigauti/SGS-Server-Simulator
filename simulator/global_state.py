@@ -37,9 +37,3 @@ class Global():
             return -1
         e = self.eventQueue[0]  # Get the next event (a list with [time, param, function])
         return e[0]  # Get the 0th place (time) from the event and return it (returning time of next event)
-
-    # def get_size_of_queue(self):
-    #    return len(self.eventQueue)
-
-    # def add_to_arr_dep(self):
-    #    self.number_of_arr_dep += 1

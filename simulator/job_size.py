@@ -1,4 +1,3 @@
-import numpy as np
 # Represents the service rate at which jobs determine sizes.
 # Uses exponential with a given service_rate
 

@@ -37,7 +37,7 @@ def TD_testing(st, servers, dispatchers, arrival_rate, job_size_rate, job_distri
     list_of_servers = simutil.init_servers(len(servers[0]), servers[0], servers[1])  # List of servers for 1 dispatcher
     servers_for_dispatchers = []
     servers_for_dispatchers.append(list_of_servers)
-    list_of_dispatchers = simutil.init_dispatchers(dispatchers[0], dispatchers[1], servers_for_dispatchers, qlearn, policyseed, td_matrix_and_backup=[td_matrix,SED(policyseed)])  # 1 dispatcher, Qlearn, 5x5 box, nothing excluded.
+    list_of_dispatchers = simutil.init_dispatchers(dispatchers[0], dispatchers[1], servers_for_dispatchers, qlearn, policyseed, td_matrix_and_backup=[td_matrix, SED(policyseed)])  # 1 dispatcher, Qlearn, 5x5 box, nothing excluded.
     statistics = Statistics()
     world = Global(statistics)
     if job_distribution == 1:
@@ -66,33 +66,8 @@ def TD_testing(st, servers, dispatchers, arrival_rate, job_size_rate, job_distri
         print('The state counter: ' + str(list_of_dispatchers[0]._policy.state_counter))
     total_no_jobs = world._stats.number_of_jobs
     print(total_no_jobs)
-    '''
-    TODO: This part needs to be refactored out into a function, displays matrix of Q-learning / TD learning part.
-    '''
 
-    '''
-    print('The Q: '+ str(list_of_dispatchers[0]._policy.Q))
-    v = list_of_dispatchers[0]._policy.v
-    v2 = list_of_dispatchers[0]._policy.v2
-    print('mean cost rate r: '+str(list_of_dispatchers[0]._policy.r))
-    print('The v:')
-    i = 0
-    for key in v:
-        i+=1
-        print(str(key)+': '+str(v[key])+'  ')
-        if not i % 5:
-            print('\n')
-    print('The v2:')
-    i = 0
-    for key in v2:
-        i+=1
-        print(str(key)+': '+str(v2[key])+'\n')
-        if not i % 5:
-            print('\n')
-    '''
-    # simutil.print_step_matrix(list_of_dispatchers[0])
     world._stats.print_stats()
-    # world._stats.save_run(sim_time)
     simutil.save_stats(world)  # Ask user if he wants to save stats to file
 
 

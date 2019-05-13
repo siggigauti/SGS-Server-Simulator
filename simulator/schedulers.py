@@ -49,18 +49,14 @@ class PS(Scheduler):
         jobs_to_depart = []
         no_of_jobs = len(server_queue)
         delta_change = curr_arrival - prev_arrival  # The amount of time between the two arrivals
-        #print("Delta change is: "+str(delta_change))
-        cumulative_time = 0
         while server_queue:
             time, job_x = heappop(server_queue)
             if time <= delta_change / no_of_jobs:  # if the remaining service was less than the time between the last arrival and now
-                #print("Condition was true, some departure(s). Remaining work was: "+str(time)+". And change/jobs was: "+str(delta_change/no_of_jobs))
                 # Then we can pop this even off the server queue and place it in departure list
                 jobs_to_depart.append(job_x)
                 # !!!! Update the departure time of this job!
                 job_x._work_done += time
-                #print("Cumulative time is now: "+str(cumulative_time))
-                #print("The departure is then: "+str(prev_arrival+cumulative_time))
+
                 job_x.set_departure(job_x._work_done + job_x._arrival_time)
                 for job_s in server_queue:  # update remaining jobs
                     job_s[0] -= time  # remove the worked time from each remaining service.

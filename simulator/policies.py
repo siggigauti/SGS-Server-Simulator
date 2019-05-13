@@ -66,9 +66,8 @@ class SED(Policy):
 
 
 class Qlearning(Policy):
-    Q = {}  # [(state, action): value]
+    Q = {}  # [(state, action): value], Unused in this version
     v_new = None
-    v = {}  # [state: value]
     v2 = {}
     state_counter = {}
     j = 0           # step counter
@@ -91,10 +90,6 @@ class Qlearning(Policy):
     r = 0
     weights = [0, 1]
     _rnd_stream = None
-
-    #######################
-    ## UTILITY FUNCTIONS ##
-    #######################
 
     # Returns true if x is in A
     def x_in_a(self):
@@ -153,12 +148,10 @@ class Qlearning(Policy):
         counter = 0
         for server in servers:
             expected_delay = (server._total_jobs + 1) / server._service_rate
-            #print('expected_delay for server {} is {} where totaljobs = {} and service rate = {}'.format(server, expected_delay, server._total_jobs, server._service_rate))
             if expected_delay < best_so_far:
                 server_id = counter
                 best_so_far = expected_delay
             counter += 1
-        #print('The choice was {}'.format(server_id))
         return server_id
 
     # Takes a list of values, returns the indx of the minimum. Random in case of tie.
@@ -175,7 +168,6 @@ class Qlearning(Policy):
     # nA = ...                     a list of states that are excluded from A
     #######
     def __init__(self, S, nS, nA, sim_time, list_of_servers, policyseed=None, *args, **kwargs):
-        # TODO: Add way to set weights of exploration (optional kwarg)
         # E.g. default its equal chances (must be done programatically), o.w. can have user provided weights list.
         if policyseed is not None:
             self._rnd_stream = np.random.RandomState(policyseed)
@@ -192,15 +184,11 @@ class Qlearning(Policy):
         self.n_servers = len(S)  # How many servers
         self.uS = self.getlist()
         for u in self.uS:  # For every state under S
-            # for j in range(0, self.n_servers): # Go through every server
-            #    self.Q[str((u,j))] = 0 # Set the Q of state, server to 0 (initialization)
-            self.v[str(u)] = 0  # Same for the value of the state
             self.v2[str(u)] = 0
             self.state_counter[str(u)] = 0
         self.x = [0] * self.n_servers  # initialize the x
         self.servers = list_of_servers
         self.enable_qlearn_on_servers()
-        #self.state_counter[self.uS[0]] = 1
         self.v_new = np.zeros([x + 1 for x in S])  # Create an ndarray with same boundary as S.
 
     # Updating the t and c
@@ -239,14 +227,13 @@ class Qlearning(Policy):
                     k = self.get_min_value(values)
 
             else:  # We're on the border (not in A, but in S)
-                # For weighted random!
-                #k = self._rnd_stream.choice(self.weights)
+                # k = self._rnd_stream.choice(self.weights) # For weighted random!
                 k = self.alt_jsq(servers)
             self.a = k
             # We've made a decision,  if the new decision leaves the old state inside the 'box' then we update the n.
             self.n = self.x[:]  # Updating n to be x
         else:  # We're outside S
-            #k = self._rnd_stream.choice(self.weights)
+            # k = self._rnd_stream.choice(self.weights)
             k = self.alt_jsq(servers)
         if(k == -2):
             print('INVALID K, ABORT')  # MAKE INTO TEST
@@ -273,33 +260,14 @@ class Qlearning(Policy):
             self.C = self.C + self.c
             self.r = self.C / self.T
             alpha = math.pow(math.e, ((-10 * self.T) / self.sim_time))
-            #alpha = 0.1
             n = str(self.n)  # this is the prev state inside box.
             x = str(self.x)  # this is the new state inside box.
             self.state_counter[x] += 1
-            # if True:# self.a == -1: #This happens when we have departure and previous state is inside S
-            #    for j in range(0, self.n_servers):
-            #        self.Q[str((self.n,j))] = ((1 - alpha)*self.Q[str((self.n,j))] + alpha*(self.c - self.t * self.r + self.v2[x])) # n is prev state, x is new state
-            # else: # We're inside A and S, and we made an active decision.
-            # only updating the acted upon server
-            #    self.Q[str((self.n,self.a))] = ((1 - alpha)*self.Q[str((self.n,self.a))] + alpha*(self.c - self.t * self.r + self.v2[x])) ##CHEATING
-            #value_update = []
-            # Get all the values from previous state for each action (server) we can take
-            # for j in range(0, self.n_servers):
-            #    value_update.append(self.Q[str((self.n,j))])
-            #self.v[n] = min(value_update)
-            #self.v_new[self.n] = (1-alpha)*self.v_new[self.n] + alpha*(self.c - self.r*self.t + self.v_new[self.x])
             self.v2[n] = (1 - alpha) * self.v2[n] + alpha * (self.c - self.r * self.t + self.v2[x])
             if True:
-                #    delta = self.v['[0, 0]'] # We get the delta by the value in this state.
-                delta1 = self.v2[str([0] * self.n_servers)]
+                delta = self.v2[str([0] * self.n_servers)]
                 for k in self.uS:  # For each state under the boundry S.
-                    #        self.v[str(k)] = self.v[str(k)] - delta # We subtract the delta from each states value
-                    self.v2[str(k)] = self.v2[str(k)] - delta1  # We subtract the delta from each states value
-                    # self.v_new[k] = self.v_new[k] - delta1 # We subtract the delta from each states value
-
-            #        for j in range(0, self.n_servers):
-            #            self.Q[str((k,j))] = self.Q[str((k,j))] - delta
+                    self.v2[str(k)] = self.v2[str(k)] - delta  # We subtract the delta from each states value
             self.t = 0  # We reset because we're inside S
             self.c = 0  # --||--
         else:

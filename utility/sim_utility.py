@@ -3,9 +3,6 @@ from simulator.dispatcher import Dispatcher
 from simulator.job import Job
 from simulator.server import Server
 from simulator.policies import RND, ShortestQueue, SED, Qlearning, NO_Matrix
-from simulator.job_size import Expo
-import numpy as np
-
 import os
 
 
