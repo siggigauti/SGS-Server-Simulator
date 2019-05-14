@@ -65,8 +65,7 @@ class SED(Policy):
         return server_id
 
 
-class Qlearning(Policy):
-    Q = {}  # [(state, action): value], Unused in this version
+class TDlearning(Policy):
     v_new = None
     v2 = {}
     state_counter = {}
@@ -92,7 +91,7 @@ class Qlearning(Policy):
     _rnd_stream = None
 
     # Returns true if x is in A
-    def x_in_a(self):
+    def x_in_a(self):  # pragma: no cover
         for i in range(0, self.n_servers):  # For every server
             if self.x[i] > self.A[i]:  # Check if the point is outside the A area
                 return False
@@ -101,7 +100,7 @@ class Qlearning(Policy):
         return True
 
     # Returns true if x is in S
-    def x_in_s(self):
+    def x_in_s(self):  # pragma: no cover
         for i in range(0, self.n_servers):
             if self.x[i] > self.S[i]:
                 return False
@@ -110,7 +109,7 @@ class Qlearning(Policy):
         return True
 
     # Returns the position of server in servers, -1 if not exists
-    def find_server_pos(self, server):
+    def find_server_pos(self, server):  # pragma: no cover
         i = 0
         for s in self.servers:
             if server is s:
@@ -119,7 +118,7 @@ class Qlearning(Policy):
         return -1
 
     # Used to generate permutations of all 'states' under S
-    def getlist(self):
+    def getlist(self):  # pragma: no cover
         r = []
         c = [0] * len(self.S)
         while 1:
@@ -132,17 +131,17 @@ class Qlearning(Policy):
                 if i is 0:
                     return r
 
-    def alt_jsq(self, servers):
+    def alt_jsq(self, servers):  # pragma: no cover
         queues = []
         for server in servers:
             queues.append(server._total_jobs)
         return min(range(len(queues)), key=queues.__getitem__)
 
-    def enable_qlearn_on_servers(self):
+    def enable_qlearn_on_servers(self):  # pragma: no cover
         for server in self.servers:
             server._qenabled = True
 
-    def alt_sed(self, servers):
+    def alt_sed(self, servers):  # pragma: no cover
         best_so_far = 9999999999
         server_id = 0
         counter = 0
@@ -155,7 +154,7 @@ class Qlearning(Policy):
         return server_id
 
     # Takes a list of values, returns the indx of the minimum. Random in case of tie.
-    def get_min_value(self, values):
+    def get_min_value(self, values):  # pragma: no cover
         indxs = []
         for indx, item in enumerate(values):
             if item == min(values):
@@ -203,7 +202,7 @@ class Qlearning(Policy):
             dtime = job._departure_time - self.last_event
             self.t += dtime
             self.last_event = job._departure_time
-        if dtime < 0:
+        if dtime < 0:  # pragma: no cover
             print('delta time is below 0, ERROR')
         self.c += dtime * sum(self.x)
 
@@ -217,8 +216,8 @@ class Qlearning(Policy):
 
                 explore = 1 if self._rnd_stream.rand() <= 0.1 else 0  # As an exponential decay.
                 if explore:
-                    k = self._rnd_stream.choice(self.weights)
-                else:
+                    k = self._rnd_stream.choice(self.weights)  # pragma: no cover
+                else:  # pragma: no cover
                     values = []
                     for j in range(0, self.n_servers):  # Step in every direction
                         dx = self.x[:]  # copy state x
@@ -226,16 +225,16 @@ class Qlearning(Policy):
                         values.append(self.v2[str(dx)])  # Add the value function for that step
                     k = self.get_min_value(values)
 
-            else:  # We're on the border (not in A, but in S)
+            else:  # pragma: no cover
                 # k = self._rnd_stream.choice(self.weights) # For weighted random!
                 k = self.alt_jsq(servers)
             self.a = k
             # We've made a decision,  if the new decision leaves the old state inside the 'box' then we update the n.
             self.n = self.x[:]  # Updating n to be x
-        else:  # We're outside S
+        else:  # pragma: no cover
             # k = self._rnd_stream.choice(self.weights)
             k = self.alt_jsq(servers)
-        if(k == -2):
+        if(k == -2):  # pragma: no cover
             print('INVALID K, ABORT')  # MAKE INTO TEST
 
         self.x[k] += 1  # e_k is adding job to server k. (1,1) <- (1,1) + (0,1) = (1,2)
@@ -270,7 +269,7 @@ class Qlearning(Policy):
                     self.v2[str(k)] = self.v2[str(k)] - delta  # We subtract the delta from each states value
             self.t = 0  # We reset because we're inside S
             self.c = 0  # --||--
-        else:
+        else:  # pragma: no cover
             if self.a is -1:
                 print('abort something wrong here.')
 

@@ -13,7 +13,6 @@ class Global():
     ##################################
     eventQueue = []
     _stats = None
-    number_of_arr_dep = 0
 
     def __init__(self, stats, *args, **kwargs):
         self._stats = stats
@@ -24,6 +23,8 @@ class Global():
     # The priority heapqueue will put the events in order of time
     # param is a list of e.g. [server/dispatcher, job, ...]
     def schedule_event(self, func, time, param):
+        if time < 0:
+            raise ValueError('time cannot be negative')
         heappush(self.eventQueue, [time, param, func])
 
     # Takes the next event from event scehduler and processes it

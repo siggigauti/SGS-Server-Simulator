@@ -47,7 +47,7 @@ class ArrivalTests(unittest.TestCase):
     def test_file_data_creation(self):
         job_size_rate = 1
         job_sizes = Expo(job_size_rate)
-        f = open('../data_results/simulation_run_for_tests.txt', 'r')
+        f = open('../test_data/simulation_run_for_tests.txt', 'r')
         data = f.read().splitlines()
         f.close()
         data2 = [tuple(float(x) for x in item.split(',')) for item in data[:-1]]
@@ -56,8 +56,8 @@ class ArrivalTests(unittest.TestCase):
         file_data_arrival.first_arrival([self.dispatcher[0], self.world])  # Create an arrival
         self.world.process_event()  # Process the arrival event
 
-        self.assertEqual(file_data_arrival._last_job._size, 0.08895212037940618)
-        self.assertEqual(file_data_arrival._last_job._arrival_time, 0.7124726225659669)
+        self.assertEqual(file_data_arrival._last_job._size, 1.0984470941530513)
+        self.assertEqual(file_data_arrival._last_job._arrival_time, 0.6760705301109414)
 
     def test_file_data_creation_empty_file(self):
         job_size_rate = 1
@@ -76,10 +76,13 @@ class ArrivalTests(unittest.TestCase):
         self.assertEqual(True, file_data_arrival._from_file)
         file_data_arrival.first_arrival([self.dispatcher[0], self.world])  # Create an arrival
         self.world.process_event()  # Process the arrival event
-        self.world.process_event()  # Process the
-        self.world.process_event()  # Process the
-        self.world.process_event()  # Process the
-        self.world.process_event()  # Process the
+        self.world.process_event()  # Process the add job
+        self.world.process_event()  # Process the exit system
+        self.world.process_event()  # Process the next arrival
+        self.assertEqual(file_data_arrival._last_job, None)
+
+    def test_generate_arrival_negative_time(self):
+        self.assertRaises(ValueError, self.arrival.generate_arrival, -1, [self.dispatcher[0], self.world])
 
 
 if __name__ == '__main__':

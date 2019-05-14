@@ -29,7 +29,7 @@ class Statistics():
         self.job_arrival_times.append(job._arrival_time)
         self.job_sizes.append(job._size)
 
-    def print_stats(self):
+    def print_stats(self):  # pragma: no cover
         print("Total number of jobs: {}".format(self.number_of_jobs))
         if(self.number_of_jobs > 1):
             sojourn_var = (self.second_pass_sojourn - self.total_sojourn_time * self.total_sojourn_time / self.number_of_jobs) / (self.number_of_jobs - 1)
@@ -57,23 +57,23 @@ class Statistics():
     def server_job_monitor_rem(self):
         self.jobs_in_server -= 1
 
-    def write_to_file_jobs(self):
+    def write_to_file_jobs(self):  # pragma: no cover
         with open("server_jobs_over_time.txt", "a") as myfile:
             myfile.write(str(self.jobs_in_server) + "\n")
 
-    def get_mean_sd_sojourn(self):
+    def get_mean_sd_sojourn(self):  # pragma: no cover
         if self.number_of_jobs > 1:
             data = "{},{}".format((self.total_sojourn_time / self.number_of_jobs), (self.second_pass_sojourn - self.total_sojourn_time * self.total_sojourn_time / self.number_of_jobs) / (self.number_of_jobs - 1))
         return data
 
-    def create_sim_dir(self):
+    def create_sim_dir(self):  # pragma: no cover
         try:
             os.makedirs('Simulation_results')
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
 
-    def write_to_file_intermediate_stats(self, file_name):
+    def write_to_file_intermediate_stats(self, file_name):  # pragma: no cover
         self.create_sim_dir()
         if(self.number_of_jobs > 1):
             sojourn_var = (self.second_pass_sojourn - self.total_sojourn_time * self.total_sojourn_time / self.number_of_jobs) / (self.number_of_jobs - 1)
@@ -98,7 +98,7 @@ class Statistics():
         with open('./Simulation_results/' + file_name + '.txt', 'a') as myfile:
             myfile.write(data + "\n")
 
-    def write_to_file_stats(self, file_name):
+    def write_to_file_stats(self, file_name):  # pragma: no cover
         self.create_sim_dir()
         if(self.number_of_jobs > 1):
             sojourn_var = (self.second_pass_sojourn - self.total_sojourn_time * self.total_sojourn_time / self.number_of_jobs) / (self.number_of_jobs - 1)
@@ -123,7 +123,7 @@ class Statistics():
         with open('../data_results/' + file_name + '.txt', 'a') as myfile:
             myfile.write(data + "\n")
 
-    def save_run(self, st):
+    def save_run(self, st):  # pragma: no cover
         f = open('../data_results/simulation_run_for_tests.txt', 'a+')
         pairs = [item for item in zip(self.job_arrival_times, self.job_sizes)]
         pairs.append(st)

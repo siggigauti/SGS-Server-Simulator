@@ -10,10 +10,10 @@ class StatsTests(unittest.TestCase):
         self.stats = stats.Statistics()
 
     def test_add_job(self):
-        self.stats.add_job(Job(0, 0.5))
+        self.stats.add_job(Job(0.28041127864778986, 1.670055588109133))
         # Not finished, need to test that each variable got incremented
-        self.assertEqual(self.stats.job_arrival_times[0], 0)
-        self.assertEqual(self.stats.job_sizes[0], 0.5)
+        self.assertEqual(self.stats.job_arrival_times[0], 0.28041127864778986)
+        self.assertEqual(self.stats.job_sizes[0], 1.670055588109133)
 
 
 if __name__ == '__main__':

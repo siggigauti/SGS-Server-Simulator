@@ -25,6 +25,8 @@ class PoissonArrival():
 
     # Generate a single poisson arrival
     def generate_arrival(self, time, param):
+        if time < 0:
+            raise ValueError('time cannot be negative')
         dispatcher = param[0]  # Get the associated dispatcher
         world = param[1]  # Get the global
         job_nr = world._stats.number_of_jobs
