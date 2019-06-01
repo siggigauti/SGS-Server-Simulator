@@ -214,7 +214,7 @@ class TDlearning(Policy):
         if self.x_in_s():
             if self.x_in_a():  # Check if in subset A
 
-                explore = 1 if self._rnd_stream.rand() <= 0.1 else 0  # As an exponential decay.
+                explore = 1 if self._rnd_stream.rand() <= 0.1 else 0  # or as an exponential decay.
                 if explore:
                     k = self._rnd_stream.choice(self.weights)  # pragma: no cover
                 else:  # pragma: no cover

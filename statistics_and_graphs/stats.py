@@ -123,6 +123,28 @@ class Statistics():
         with open('../data_results/' + file_name + '.txt', 'a') as myfile:
             myfile.write(data + "\n")
 
+    def write_to_file_stats_only_mean(self, file_name):  # pragma: no cover
+        self.create_sim_dir()
+        if(self.number_of_jobs > 1):
+            sojourn_var = (self.second_pass_sojourn - self.total_sojourn_time * self.total_sojourn_time / self.number_of_jobs) / (self.number_of_jobs - 1)
+            service_var = (self.second_pass_service - self.total_service_time * self.total_service_time / self.number_of_jobs) / (self.number_of_jobs - 1)
+            waiting_var = (self.second_pass_waiting - self.total_waiting_time * self.total_waiting_time / self.number_of_jobs) / (self.number_of_jobs - 1)
+        else:
+            sojourn_var = 0
+            service_var = 0
+            waiting_var = 0
+        if(self.number_of_jobs > 0):
+            sojourn_mean = self.total_sojourn_time / self.number_of_jobs
+            service_mean = self.total_service_time / self.number_of_jobs
+            waiting_mean = self.total_waiting_time / self.number_of_jobs
+        else:
+            sojourn_mean = 0
+            service_mean = 0
+            waiting_mean = 0
+        data = '{2},{5},{8}'.format(self.number_of_jobs, self.total_sojourn_time, sojourn_mean, sojourn_var, self.total_service_time, service_mean, service_var, self.total_waiting_time, waiting_mean, waiting_var)
+        with open('../data_results/' + file_name + '.txt', 'a') as myfile:
+            myfile.write(data + "\n")
+
     def save_run(self, st):  # pragma: no cover
         f = open('../data_results/simulation_run_for_tests.txt', 'a+')
         pairs = [item for item in zip(self.job_arrival_times, self.job_sizes)]

@@ -9,7 +9,8 @@ import argparse
 from timeit import default_timer as timer
 import numpy as np
 from simulator.policies import ShortestQueue, SED
-
+import gc
+from multiprocessing import Process
 
 # Argument parser
 # Optional parameter í server listan sjá: https://stackoverflow.com/questions/36166225/using-the-same-option-multiple-times-in-pythons-argparse
@@ -68,7 +69,10 @@ def TD_testing(st, servers, dispatchers, arrival_rate, job_size_rate, job_distri
     print(total_no_jobs)
 
     world._stats.print_stats()
-    simutil.save_stats(world)  # Ask user if he wants to save stats to file
+    stat_file_name = 'RND' if dispatchers[1][0] == 1 else 'JSQ'
+    world._stats.write_to_file_stats_only_mean(stat_file_name)
+
+    #simutil.save_stats(world)  # Ask user if he wants to save stats to file
 
 
 if __name__ == '__main__':
@@ -98,3 +102,13 @@ if __name__ == '__main__':
         # Using TD learned matrix, rho 0.75
         descision_matrix = np.matrix([[0,0,0,0],[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,1,0,0],[1,1,0,0],[1,1,1,0],[1,1,1,0],[1,1,1,0],[1,1,1,1],[1,1,1,1],[1,1,1,1]])
         TD_testing(1000000, [(1.0, 1.0), (3.0, 1.0)], [1, [5]], 3.92, 1, 1, [], td_matrix=descision_matrix)
+    elif args.type == 8: # simulation for confidence bound generation for RND and JSQ.
+        for _ in range(75):
+            p = Process(target=TD_testing, args=(1000000, [(1.0, 1.0), (1.0, 1.0)], [1, [1]], 1.75, 1, 1, [],))
+            p.start()
+            p.join()
+        for _ in range(100):
+            p = Process(target=TD_testing, args=(1000000, [(1.0, 1.0), (1.0, 1.0)], [1, [2]], 1.75, 1, 1, [],))
+            p.start()
+            p.join()
+
